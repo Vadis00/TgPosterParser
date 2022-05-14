@@ -22,6 +22,7 @@ namespace TgPosterParser.Telegram.WTelegramClient
             Caption = message.message;
             Groupedid = message.grouped_id;
 
+
         }
 
         WTelegramClient client;
@@ -82,6 +83,7 @@ namespace TgPosterParser.Telegram.WTelegramClient
 
             }
 
+            // add DB 
 
 
         }

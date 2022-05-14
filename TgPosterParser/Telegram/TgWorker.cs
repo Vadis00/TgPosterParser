@@ -40,6 +40,7 @@ namespace TgPosterParser.Telegram
         static public event AccountHandler? Notify;
 
         bool isLogIn = false;
+
         public async Task LogIn()
         {
             Accaunt.Client = await WTelegramClient.WTelegramClient.WTelegramClientAsync(Accaunt);
