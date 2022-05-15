@@ -86,7 +86,7 @@ namespace TgPosterParser
             {
                 await Worker.LogIn();
 
-                await Worker.Accaunt.Client.GetAllDialogs(); // заменить на accaunt.UpdateChannelsList
+                await Worker.Client.GetAllDialogs(); // заменить на accaunt.UpdateChannelsList
 
                 Worker.ShowAllChats();
 

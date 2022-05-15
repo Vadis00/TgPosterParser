@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TgPosterParser.Content;
+using TgPosterParser.DB;
 using TL;
 using WTelegram;
 
@@ -13,18 +14,18 @@ namespace TgPosterParser.Telegram.WTelegramClient
     class TgMessage : Content.Message
     {
 
-        public TgMessage(TL.Message message, WTelegramClient client) : base(message.ID, message.Peer.ID, client.Accaunt.Chats[message.Peer.ID].Folder)
+        public TgMessage(TL.Message message, WTelegramClient client, DB.Accaunt accaunt) : base(message.ID, message.Peer.ID, accaunt.Chats[message.Peer.ID].Folder)
         {
             this.message = message;
+            
             this.client = client;
 
             Date = message.Date;
             Caption = message.message;
             Groupedid = message.grouped_id;
 
-
         }
-
+        
         WTelegramClient client;
         TL.Message message;
         long Groupedid;
@@ -83,7 +84,21 @@ namespace TgPosterParser.Telegram.WTelegramClient
 
             }
 
+            TelegaPosterContext telegaPosterContext = new();
+
             // add DB 
+            DB.Message DBmessage = new DB.Message()
+            {
+               ChannelId =9,
+               Text = "Hello Word",
+          
+            };
+
+            telegaPosterContext.Messages.Add(DBmessage);
+
+           
+            telegaPosterContext.SaveChanges();
+
 
 
         }

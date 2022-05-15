@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using TgPosterParser.Telegram.WTelegramClient;
 using WTelegram;
 using TL;
-
 using System.Windows;
 using TgPosterParser.DB;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +24,7 @@ namespace TgPosterParser.Telegram
         public TgWorker(DB.Accaunt accaunt)
         {
             Phone = accaunt.Phone;
-            accaunt.TgWorker = this;
+          //  accaunt.TgWorker = this;
             this.Accaunt = accaunt;
           
         }
@@ -36,6 +35,8 @@ namespace TgPosterParser.Telegram
 
         public DB.Accaunt Accaunt;
 
+        public WTelegramClient.WTelegramClient Client;
+
         public delegate void AccountHandler();
         static public event AccountHandler? Notify;
 
@@ -43,13 +44,13 @@ namespace TgPosterParser.Telegram
 
         public async Task LogIn()
         {
-            Accaunt.Client = await WTelegramClient.WTelegramClient.WTelegramClientAsync(Accaunt);
+            Client = await WTelegramClient.WTelegramClient.WTelegramClientAsync(this);
             isLogIn = true;
         }
         public async Task ListenUpdate()
         {
             if (isLogIn)
-                await Accaunt.Client.ListenUpdate();
+                await Client.ListenUpdate();
         }
         public async Task NewMessage(TL.Message msg)
         {
@@ -60,9 +61,9 @@ namespace TgPosterParser.Telegram
             {
                 GlobalData.Log.Report(Accaunt.Chats[msg.Peer.ID].GetInfo());
             }
-            await new TgMessage(msg, Accaunt.Client).Save();
+            await new TgMessage(msg, Client, Accaunt).Save();
 
-            new TgMessage(msg, Accaunt.Client).Show();
+            new TgMessage(msg, Client, Accaunt).Show();
         }
         public void UpdateChannelsList()
         {

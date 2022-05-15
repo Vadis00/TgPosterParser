@@ -12,28 +12,27 @@ using System.IO;
 
 namespace TgPosterParser.Telegram.WTelegramClient
 {
-   public	class WTelegramClient  
+   public class WTelegramClient  
 	{
 
-		public DB.Accaunt Accaunt;
+		private TgWorker worker;
 		ListenUpdates updates;
 		Client Client;
 	    User My;
 		 
 		public delegate string AccountHandler(string message);
 		public event AccountHandler Notify;
-		private WTelegramClient(DB.Accaunt accaunt)
+		private WTelegramClient(TgWorker worker)
 		{
-			this.Accaunt = accaunt;
-			accaunt.Client = this;
-			Client = new Client(what => Config(what, "session"));
+			this.worker = worker;
 
+			Client = new Client(what => Config(what, "session"));
 		}
 
 		//Асинхронный вариант конструктора WTelegramClient
-		public static async Task<WTelegramClient> WTelegramClientAsync(DB.Accaunt accaunt)
+		public static async Task<WTelegramClient> WTelegramClientAsync(TgWorker worker)
 		{
-			WTelegramClient Client = new WTelegramClient(accaunt);
+			WTelegramClient Client = new WTelegramClient(worker);
 			await Client.isAuthorization();
 
 			return Client;
@@ -46,19 +45,19 @@ namespace TgPosterParser.Telegram.WTelegramClient
 		private string Config(string what, string session_pathname)
 		{
 
-			if (what == "api_id") return Accaunt.ClientId;
-			if (what == "api_hash") return Accaunt.ClientHash;
-			if (what == "phone_number") return Accaunt.Phone;
+			if (what == "api_id") return worker.Accaunt.ClientId;
+			if (what == "api_hash") return worker.Accaunt.ClientHash;
+			if (what == "phone_number") return worker.Accaunt.Phone;
 			if (what == "server_address") return "149.154.167.50:443";
 			if (what == "verification_code") return Notify?.Invoke("verification_code");
-			if (what == "session_pathname") return Accaunt.Phone;
+			if (what == "session_pathname") return worker.Accaunt.Phone;
 
 			return null;
 		}
 		// Слушаем обновлеия всех чатов на которые подписан юзер
 		public async Task ListenUpdate()
 		{
-			updates = new(Client, Accaunt, My);
+			updates = new(Client, worker, My);
 
 			await updates.Start();
 		}
@@ -70,9 +69,9 @@ namespace TgPosterParser.Telegram.WTelegramClient
 
 			foreach ((long id, ChatBase chat) in chats.chats)
 			{
-				Accaunt.Chats = new();
+				worker.Accaunt.Chats = new();
 
-				Accaunt.Chats.Add(id, new DB.Channel(chat));
+				worker.Accaunt.Chats.Add(id, new DB.Channel(chat));
 				//MainWindow.log.Report(new Channels(chat).GetInfo());
 			}
 

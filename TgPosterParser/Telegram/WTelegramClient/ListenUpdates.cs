@@ -13,19 +13,17 @@ namespace TgPosterParser.Telegram.WTelegramClient
 	class ListenUpdates 
 	{
 
-		public ListenUpdates(Client client, Accaunt accaunt, User user)
+		public ListenUpdates(Client client, TgWorker worker, User user)
 		{
 			this.Client = client;
-			this.Accaunt = accaunt;
+			this.Worker = worker;
 			My = user;
 			 
 		}
 
 		private Client Client;
 		private User My;
-		private Accaunt Accaunt;
-
-
+		private TgWorker Worker;
 
 		static readonly Dictionary<long, User> Users = new();
 		static readonly Dictionary<long, ChatBase> Chats = new();
@@ -67,7 +65,7 @@ namespace TgPosterParser.Telegram.WTelegramClient
 		{
 			switch (messageBase)
 			{
-				case TL.Message m: await Accaunt.TgWorker.NewMessage(m); break;
+				case TL.Message m: await Worker.NewMessage(m); break;
 					//	case MessageService ms: MessageBox.Show($"{Peer(ms.from_id)} in {Peer(ms.peer_id)} [{ms.action.GetType().Name[13..]}]"); break;
 			}
 		}
