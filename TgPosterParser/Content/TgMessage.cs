@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,25 +12,30 @@ using WTelegram;
 
 namespace TgPosterParser.Telegram.WTelegramClient
 {
-    class TgMessage : Content.Message
+   // class TgMessage : MessageOptions, IMessage
+    class TgMessage : DB.Message
     {
 
-        public TgMessage(TL.Message message, WTelegramClient client, DB.Accaunt accaunt) : base(message.ID, message.Peer.ID, accaunt.Chats[message.Peer.ID].Folder)
+       public TgMessage(TL.Message message, WTelegramClient client, Accaunt accaunt)
         {
             this.message = message;
-            
+
             this.client = client;
 
-            Date = message.Date;
-            Caption = message.message;
+            
+            MsgId = message.ID;
+            Folder = $@"{accaunt.Chats[message.Peer.ID].Folder}\{message.ID}";
+            Date =  message.Date.ToString("yyyy-MM-dd HH:mm:ss.fff"); 
+            Text = message.message;
             Groupedid = message.grouped_id;
-
+            ChannelId = ChannelIdToDataBaseId(message.Peer.ID);
+            ForwardFrom =2340;
+            //ForwardFrom = message.fwd_from.from_id.ID;
         }
-        
-        WTelegramClient client;
-        TL.Message message;
-        long Groupedid;
 
+        readonly WTelegramClient client;
+        readonly TL.Message message;
+        
 
         public void Show()
         {
@@ -42,18 +48,19 @@ namespace TgPosterParser.Telegram.WTelegramClient
 
 
 
-            GlobalData.Log.Report($"ID: {ID}" +
+            GlobalData.Log.Report($"ID: {Id}" +
                 $"Date: {Date}" +
-                $"Text: {Caption}" +
+                $"Text: {Text}" +
                 $"Groupedid: {Groupedid}" +
                 $"PeerID {PeerID}" +
                 $"FromID {FromID}");
 
             // message.fwd_from.from_id
         }
-        public async Task Save()
+        public async Task DownloadMedia()
         {
-            var path = GetNewFilePath();
+            //    var path = GetNewFilePath();
+            var path = "";
 
             switch (message.media)
             {
@@ -84,23 +91,38 @@ namespace TgPosterParser.Telegram.WTelegramClient
 
             }
 
-            TelegaPosterContext telegaPosterContext = new();
 
-            // add DB 
-            DB.Message DBmessage = new DB.Message()
+        }
+        private int ChannelIdToDataBaseId(long ChannelId)
+        {
+            TelegaPosterContext DataBase = new();
+
+            foreach (var channel in DataBase.Channels)
             {
-               ChannelId =9,
-               Text = "Hello Word",
-          
-            };
+                if (channel.ChannelsId == ChannelId)
+                    return channel.Id;
+            }             
+            return -1;
 
-            telegaPosterContext.Messages.Add(DBmessage);
+        }
+         
+        private int GetMsgFileCount()
+        {
+            var msgfiles = Directory.GetFiles(Folder);
 
-           
-            telegaPosterContext.SaveChanges();
+            if (msgfiles != null)
+                return msgfiles.Length;
 
+            return 0;
+        }
+        protected string GetNewFilePath()
+        {
+            var MsgFileCount = GetMsgFileCount();
+            MsgFileCount++;
 
+            var path = $@"{Folder}\{MsgFileCount}";
 
+            return path;
         }
     }
 }

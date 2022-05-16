@@ -8,14 +8,18 @@ namespace TgPosterParser.Content
 {
     interface IMessage
     {
-        long ID { get; }
-        long Source { get; }
-        string Name { get; }
-        DateTime Date { get; }
-        string Caption { get; }
-        public string ProjectFolder { get;   }
-        public string MessageFolder { get;   }
-        Content Content { get; set; }
+        int MsgId { get; set; }
+        int ChannelId { get; set; }
+        string Text { get; set; }
+        string Folder { get; set; }
+        long? Groupedid { get; set; }
+        long? ForwardFrom { get; set; }
+        string Date { get; set; }
+        bool isMedia { get; set; }
+
+    //    public string ProjectFolder { get;   }
+    //    public string MessageFolder { get;   }
+    //    Content Content { get; set; }
 
     }
 }

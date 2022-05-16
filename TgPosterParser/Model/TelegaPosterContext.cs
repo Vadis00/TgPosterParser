@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace TgPosterParser.DB
 {
-    public partial class TelegaPosterContext : DbContext
+    public  partial class TelegaPosterContext : DbContext
     {
         public TelegaPosterContext()
         {

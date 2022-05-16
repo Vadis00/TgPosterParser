@@ -7,23 +7,23 @@ using System.Threading.Tasks;
 
 namespace TgPosterParser.Content
 {
-    class Message : IMessage
+    class MessageOptions 
     {
-        public Message(long id, long source, string path)
+        public MessageOptions(long id, long source, string path)
         {
-            ID = id;
             Source = source;
             ProjectFolder = path;
-            MessageFolder = $@"{ProjectFolder}\{ID}";
+            Folder = $@"{ProjectFolder}\{id}";
+            System.Windows.MessageBox.Show(Folder);
         }        
-        public long ID { get; protected set; }
         public long Source { get; }
         public string ProjectFolder { get; set; }
+
         private string messageFolder;
-        public string MessageFolder
+        public string Folder
         {
             get { return messageFolder; }
-            private set
+            set
             {
                 if (!Directory.Exists(value))
                     Directory.CreateDirectory(value);
@@ -31,13 +31,10 @@ namespace TgPosterParser.Content
                 messageFolder = value;
             }
         }
-        public string Name => throw new NotImplementedException();
-        public DateTime Date { get; protected set; }
-        public string Caption { get; protected set; }
         public Content Content { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         private int GetMsgFileCount()
         {
-            var msgfiles = Directory.GetFiles(MessageFolder);
+            var msgfiles = Directory.GetFiles(Folder);
 
             if (msgfiles != null)
                 return msgfiles.Length;
@@ -49,7 +46,7 @@ namespace TgPosterParser.Content
             var MsgFileCount = GetMsgFileCount();
             MsgFileCount++;
 
-            var path = $@"{MessageFolder}\{MsgFileCount}";
+            var path = $@"{Folder}\{MsgFileCount}";
 
             return path;
         }

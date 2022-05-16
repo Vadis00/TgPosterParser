@@ -26,9 +26,6 @@ namespace TgPosterParser.DB
         [NotMapped]
         public string AuthCode { get; set; }
 
-      //  public WTelegramClient Client;
-
-       // public TgWorker TgWorker;
         public virtual ICollection<Channel> Channels { get; set; }
 
         [NotMapped]

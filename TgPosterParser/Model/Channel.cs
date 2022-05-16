@@ -39,7 +39,7 @@ namespace TgPosterParser.DB
         public int Id { get; set; }
         public int AccountId { get; set; }
         public string UserName { get; set; }
-        public float ChannelsId { get; set; }
+        public long ChannelsId { get; set; }
         public string Title { get; set; }
 
         private string folder;

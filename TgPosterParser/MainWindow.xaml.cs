@@ -36,6 +36,13 @@ namespace TgPosterParser
         {
             InitializeComponent();
 
+            var DB = new TelegaPosterContext();
+
+            foreach(var accaunt in DB.Accaunts)
+            {
+                foreach(var channel in accaunt.Channels)
+                MessageBox.Show(channel.Title);
+            }
             Workers = TgWorker.GetTgWorkers(new TelegaPosterContext().Accaunts);
 
             TelegramTasksGrid.ItemsSource = Workers;

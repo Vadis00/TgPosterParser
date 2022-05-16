@@ -10,6 +10,7 @@ using TL;
 using System.Windows;
 using TgPosterParser.DB;
 using Microsoft.EntityFrameworkCore;
+using TgPosterParser.Content;
 
 namespace TgPosterParser.Telegram
 {
@@ -61,9 +62,18 @@ namespace TgPosterParser.Telegram
             {
                 GlobalData.Log.Report(Accaunt.Chats[msg.Peer.ID].GetInfo());
             }
-            await new TgMessage(msg, Client, Accaunt).Save();
 
-            new TgMessage(msg, Client, Accaunt).Show();
+            TelegaPosterContext DataBase = new();
+
+            TgMessage tgMessage = new TgMessage(msg, Client, Accaunt);
+
+            //   await tgMessage.DownloadMedia();
+           
+            DataBase.Messages.Add(tgMessage);
+            
+            var resut = DataBase.SaveChanges();
+            
+
         }
         public void UpdateChannelsList()
         {
